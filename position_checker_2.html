@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution Center - Free Positions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #667eea;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        input[type="file"]:hover {
+            background: #f0f0ff;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .results h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h4 {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .number {
+            color: #333;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .positions-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .positions-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .positions-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .positions-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+        
+        .position-item {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 3px;
+            background: #f0f0ff;
+            border-radius: 4px;
+            color: #333;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-label input {
+            cursor: pointer;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #c62828;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Distribution Center - Position Checker</h1>
+        <p class="subtitle">Upload CSV to find free positions</p>
+        
+        <div class="section">
+            <h2>1. Select Storage Types</h2>
+            
+            <h3 style="font-size: 14px; color: #666; margin-bottom: 10px;">Storage Types:</h3>
+            <div class="checkbox-group" style="grid-template-columns: repeat(3, 1fr);">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="typeEstante" value="estante" checked>
+                    <span>📚 Estante (Ímpares)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="typeFlowrack" value="flowrack" checked>
+                    <span>📦 Flowrack (Pares)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="typePallet" value="pallet" checked>
+                    <span>🏗️ Picking Pallet</span>
+                </label>
+            </div>
+            
+            <h3 style="font-size: 14px; color: #666; margin: 15px 0 10px 0;">Main Regions (Estante/Flowrack):</h3>
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionA" value="A" checked>
+                    <span>Region A</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionB" value="B" checked>
+                    <span>Region B</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionC" value="C" checked>
+                    <span>Region C</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionD" value="D" checked>
+                    <span>Region D</span>
+                </label>
+            </div>
+            
+            <h3 style="font-size: 14px; color: #666; margin: 15px 0 10px 0;">Picking Pallet Regions:</h3>
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionW" value="W" checked>
+                    <span>W01 (1-24)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionXC" value="XC" checked>
+                    <span>XC01 (1-10)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionXD" value="XD" checked>
+                    <span>XD01 (1-10)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionY1" value="Y1" checked>
+                    <span>Y01 (1-26)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="regionY2" value="Y2" checked>
+                    <span>Y02 (1-50)</span>
+                </label>
+            </div>
+            
+            <div class="info">
+                <strong>Estante:</strong> Posições ímpares (A01-01, A01-03...) → A-F
+                <br><strong>Flowrack:</strong> Posições pares (A01-02, A01-04...) → A-E
+                <br><strong>Picking Pallet:</strong> Regiões especiais → apenas A
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>2. Upload Occupied Positions CSV</h2>
+            <label for="csvFile">Select CSV file(s) with occupied positions:</label>
+            <input type="file" id="csvFile" accept=".csv" multiple>
+            <div id="fileList" style="margin-top: 10px; font-size: 13px; color: #666;"></div>
+        </div>
+        
+        <div class="section">
+            <button id="processBtn" onclick="processPositions()">🔍 Find Free Positions</button>
+            <button id="downloadBtn" onclick="downloadResults()" style="background: #4caf50; display: none;">💾 Download Free Positions</button>
+            <button onclick="reset()" style="background: #ff9800;">🔄 Reset</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let freePositions = [];
+        
+        // Display selected files
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const fileList = document.getElementById('fileList');
+            const files = e.target.files;
+            
+            if (files.length > 0) {
+                let html = `<strong>Selected files (${files.length}):</strong><br>`;
+                for (let i = 0; i < files.length; i++) {
+                    html += `📄 ${files[i].name}<br>`;
+                }
+                fileList.innerHTML = html;
+            } else {
+                fileList.innerHTML = '';
+            }
+        });
+        
+        // Define special pallet positions (exceptions from normal rules)
+        // These are the ONLY pallet positions that physically exist - no more, no less
+        const SPECIAL_PALLET_POSITIONS = [
+            "A01-212-A","A01-214-A","A01-216-A","A01-218-A","A01-220-A","A01-224-A","A01-228-A",
+            "A01-232-A","A01-236-A","A01-240-A","A01-242-A","A01-246-A","A01-250-A","A01-254-A",
+            "A01-254-B","A01-258-A","A01-258-B","A01-262-A","A01-266-A","A01-268-A","A01-446-A",
+            "A01-450-A","A01-454-A","A01-456-A","A01-458-A","A01-462-A","A01-466-A","A01-470-A",
+            "A01-474-A","A01-478-A","B01-02-A","B01-04-A","B01-08-A","B01-10-A","B01-14-A",
+            "B01-16-A","B01-20-A","B01-212-A","B01-216-A","B01-22-A","B01-220-A","B01-224-A",
+            "B01-228-A","B01-232-A","B01-236-A","B01-236-B","B01-240-A","B01-240-B","B01-242-A",
+            "B01-246-A","B01-250-A","B01-254-A","B01-256-A","B01-256-B","B01-258-A","B01-26-A",
+            "B01-262-A","B01-266-A","B01-268-A","B01-28-A","B01-446-A","B01-450-A","B01-454-A",
+            "B01-456-A","B01-458-A","B01-462-A","B01-466-A","B01-470-A","B01-474-A","B01-478-A",
+            "B01-482-A","C01-02-A","C01-04-A","C01-08-A","C01-10-A","C01-14-A","C01-16-A",
+            "C01-20-A","C01-204-A","C01-204-B","C01-206-A","C01-206-B","C01-208-A","C01-208-B",
+            "C01-210-A","C01-210-B","C01-212-A","C01-212-B","C01-214-A","C01-214-B","C01-216-A",
+            "C01-216-B","C01-218-A","C01-218-B","C01-22-A","C01-220-A","C01-220-B","C01-222-A",
+            "C01-222-B","C01-224-A","C01-224-B","C01-226-A","C01-226-B","C01-228-A","C01-228-B",
+            "C01-230-A","C01-230-B","C01-240-B","C01-242-A","C01-242-B","C01-244-A","C01-244-B",
+            "C01-246-A","C01-246-B","C01-248-A","C01-248-B","C01-250-A","C01-250-B","C01-252-A",
+            "C01-252-B","C01-254-A","C01-254-B","C01-256-A","C01-256-B","C01-258-A","C01-258-B",
+            "C01-26-A","C01-260-A","C01-262-A","C01-264-A","C01-266-A","C01-268-A","C01-28-A",
+            "C01-450-A","C01-454-A","C01-456-A","C01-458-A","C01-462-A","C01-466-A","C01-470-A",
+            "C01-474-A","C01-478-A","C01-482-A","D01-02-A","D01-04-A","D01-08-A","D01-10-A",
+            "D01-14-A","D01-16-A","D01-20-A","D01-212-A","D01-216-A","D01-22-A","D01-220-A",
+            "D01-224-A","D01-228-A","D01-232-A","D01-236-A","D01-240-A","D01-240-B","D01-240-C",
+            "D01-240-D","D01-240-E","D01-240-F","D01-240-G","D01-240-H","D01-240-I","D01-240-J",
+            "D01-240-K","D01-240-L","D01-240-M","D01-240-N","D01-240-O","D01-240-P","D01-240-Q",
+            "D01-240-R","D01-240-S","D01-240-T","D01-240-U","D01-242-A","D01-242-B","D01-242-C",
+            "D01-242-D","D01-242-E","D01-242-F","D01-242-G","D01-246-A","D01-246-B","D01-250-A",
+            "D01-250-B","D01-254-A","D01-254-B","D01-258-A","D01-258-B","D01-26-A","D01-262-A",
+            "D01-262-B","D01-264-A","D01-264-B","D01-266-A","D01-266-B","D01-268-A","D01-268-B",
+            "D01-28-A","D01-450-A","D01-454-A","D01-456-A","D01-458-A","D01-462-A","D01-466-A",
+            "D01-470-A","D01-474-A","D01-478-A","D01-482-A"
+        ];
+        
+        // Extract base positions (without height) that have pallets
+        // This way we can exclude ALL heights of these positions from normal generation
+        const PALLET_BASE_POSITIONS = new Set(
+            SPECIAL_PALLET_POSITIONS.map(code => {
+                const match = code.match(/^([A-Z]+\d+-\d+)-/);
+                return match ? match[1] : null;
+            }).filter(Boolean)
+        );
+        
+        // Positions that don't exist in the warehouse (to be excluded)
+        const EXCLUDED_POSITIONS = [
+            "ZPP01-18-A","ZPP01-18-B","ZPP01-18-C","ZPP02-18-A","ZPP02-18-B","ZPP02-18-C",
+            "ZPP03-18-A","ZPP03-18-B","ZPP03-18-C","ZPP04-18-A","ZPP04-18-B","ZPP04-18-C",
+            "ZPP05-18-A","ZPP05-18-B","ZPP05-18-C","ZPP06-18-A","ZPP06-18-B","ZPP06-18-C",
+            "ZPP07-18-A","ZPP07-18-B","ZPP07-18-C","ZPP08-18-A","ZPP08-18-B","ZPP08-18-C",
+            "ZPP09-18-A","ZPP09-18-B","ZPP09-18-C","ZPP10-18-A","ZPP10-18-B","ZPP10-18-C",
+            "ZPP11-18-A","ZPP11-18-B","ZPP11-18-C","ZPP12-18-A","ZPP12-18-B","ZPP12-18-C",
+            "ZPP13-18-A","ZPP13-18-B","ZPP13-18-C","ZPP14-18-A","ZPP14-18-B","ZPP14-18-C",
+            "ZPP01-41-A","ZPP01-42-A","A01-02-A","A01-04-A","A01-08-A","A01-10-A","A01-14-A",
+            "A01-16-A","A01-20-A","A01-22-A","A01-26-A","A01-28-A","A01-482-A","B01-260-A",
+            "B01-354-A","B01-354-B","B01-354-C","B01-354-D","B01-354-E","B01-356-A","B01-356-B",
+            "B01-356-C","B01-356-D","B01-356-E","B01-358-A","B01-358-B","B01-358-C","B01-358-D",
+            "B01-358-E","B01-481-A","B01-481-B","B01-481-C","B01-481-D","B01-481-E","B01-481-F",
+            "C01-232-A","C01-236-A","C01-240-A","C01-240-C","C01-240-D","C01-240-E","C01-240-F",
+            "C01-240-G","C01-242-C","C01-242-D","C01-242-E","C01-242-F","C01-242-G","D01-244-B",
+            "D01-248-B","D01-252-B","D01-256-B","D01-260-B","D01-481-F","RC01-24-B","RC01-24-C",
+            "RC01-24-D","RC01-24-E","RC01-24-F","RC01-24-G","RC01-24-H","RC01-24-I","RC01-24-J",
+            "RC01-25-B","RC01-25-C","RC01-25-D","RC01-25-E","RC01-25-F","RC01-25-G","RC01-25-H",
+            "RC01-25-I","RC01-25-J","RD01-24-B","RD01-24-C","RD01-24-D","RD01-24-E","RD01-24-F",
+            "RD01-24-G","RD01-24-H","RD01-24-I","RD01-24-J","RD01-25-B","RD01-25-C","RD01-25-D",
+            "RD01-25-E","RD01-25-F","RD01-25-G","RD01-25-H","RD01-25-I","RD01-25-J","Y01-41-A",
+            "Y01-42-A","Y01-43-A","Y01-44-A","Y01-45-A","Y01-46-A","Y01-47-A","Y01-48-A",
+            "Y01-49-A","Y01-50-A","Y02-39-A","Y02-41-A","Y02-43-A","Y02-45-A","Y02-47-A","Y02-49-A"
+        ];
+        
+        // Generate all possible positions based on rules
+        function generateAllPositions() {
+            const positions = [];
+            const includeEstante = document.getElementById('typeEstante').checked;
+            const includeFlowrack = document.getElementById('typeFlowrack').checked;
+            const includePallet = document.getElementById('typePallet').checked;
+            
+            // Main regions (A, B, C, D) - follow odd/even rules
+            const mainRegions = ['A', 'B', 'C', 'D'].filter(r => 
+                document.getElementById(`region${r}`).checked
+            );
+            
+            for (const region of mainRegions) {
+                for (let num = 1; num <= 477; num++) {
+                    const numStr = num.toString().padStart(2, '0');
+                    const isOdd = num % 2 === 1;
+                    const basePos = `${region}01-${numStr}`;
+                    
+                    // Skip this entire position number if it has pallet positions
+                    if (PALLET_BASE_POSITIONS.has(basePos)) continue;
+                    
+                    // Skip based on storage type filter
+                    if (isOdd && !includeEstante) continue;
+                    if (!isOdd && !includeFlowrack) continue;
+                    
+                    // Odd positions go to F, even positions go to E
+                    const maxHeight = isOdd ? 'F' : 'E';
+                    const heights = ['A', 'B', 'C', 'D', 'E'];
+                    if (maxHeight === 'F') heights.push('F');
+                    
+                    for (const height of heights) {
+                        const code = `${basePos}-${height}`;
+                        
+                        positions.push({
+                            code: code,
+                            type: isOdd ? 'estante' : 'flowrack'
+                        });
+                    }
+                }
+            }
+            
+            // Add special pallet positions from main regions
+            if (includePallet) {
+                const mainRegions = ['A', 'B', 'C', 'D'].filter(r => 
+                    document.getElementById(`region${r}`).checked
+                );
+                
+                for (const code of SPECIAL_PALLET_POSITIONS) {
+                    const region = code.charAt(0);
+                    if (mainRegions.includes(region)) {
+                        positions.push({
+                            code: code,
+                            type: 'pallet'
+                        });
+                    }
+                }
+                
+                // Special regions - only height A (Picking Pallet)
+                const specialRegions = [
+                    { id: 'W', prefix: 'W01', max: 24, checked: document.getElementById('regionW').checked },
+                    { id: 'XC', prefix: 'XC01', max: 10, checked: document.getElementById('regionXC').checked },
+                    { id: 'XD', prefix: 'XD01', max: 10, checked: document.getElementById('regionXD').checked },
+                    { id: 'Y1', prefix: 'Y01', max: 26, checked: document.getElementById('regionY1').checked },
+                    { id: 'Y2', prefix: 'Y02', max: 50, checked: document.getElementById('regionY2').checked }
+                ];
+                
+                for (const special of specialRegions) {
+                    if (special.checked) {
+                        for (let num = 1; num <= special.max; num++) {
+                            const numStr = num.toString().padStart(2, '0');
+                            positions.push({
+                                code: `${special.prefix}-${numStr}-A`,
+                                type: 'pallet'
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Filter out excluded positions
+            return positions.filter(p => !EXCLUDED_POSITIONS.includes(p.code));
+        }
+        
+        // Parse CSV and extract location codes
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const occupiedPositions = [];
+            
+            // Detect delimiter (comma or tab)
+            const delimiter = lines[0].includes('\t') ? '\t' : ',';
+            
+            // Find the header row
+            const headers = lines[0].split(delimiter).map(h => h.trim());
+            let locationIndex = headers.indexOf('location_code');
+            
+            // If no header found, assume first column is the location
+            if (locationIndex === -1) {
+                locationIndex = 0;
+            }
+            
+            // Parse data rows
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const columns = line.split(delimiter);
+                if (columns.length > locationIndex) {
+                    const position = columns[locationIndex].trim();
+                    if (position && position.match(/^[A-Z]+\d+-\d+-[A-Z]$/)) {
+                        occupiedPositions.push(position);
+                    }
+                }
+            }
+            
+            return occupiedPositions;
+        }
+        
+        // Main processing function
+        async function processPositions() {
+            const fileInput = document.getElementById('csvFile');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files.length) {
+                resultsDiv.innerHTML = '<div class="error">❌ Please select at least one CSV file</div>';
+                return;
+            }
+            
+            const files = fileInput.files;
+            let allOccupiedPositions = [];
+            
+            try {
+                // Process all files
+                for (let i = 0; i < files.length; i++) {
+                    const csvText = await readFileAsText(files[i]);
+                    const occupiedPositions = parseCSV(csvText);
+                    allOccupiedPositions = allOccupiedPositions.concat(occupiedPositions);
+                }
+                
+                // Remove duplicates
+                allOccupiedPositions = [...new Set(allOccupiedPositions)];
+                
+                // Generate all possible positions
+                const allPositionsData = generateAllPositions();
+                const allPositionCodes = allPositionsData.map(p => p.code);
+                
+                // Find free positions with type info
+                const freePositionsData = allPositionsData.filter(p => 
+                    !allOccupiedPositions.includes(p.code)
+                );
+                
+                freePositions = freePositionsData.map(p => p.code); // For CSV export
+                
+                // Group by type
+                const byType = {
+                    estante: freePositionsData.filter(p => p.type === 'estante'),
+                    flowrack: freePositionsData.filter(p => p.type === 'flowrack'),
+                    pallet: freePositionsData.filter(p => p.type === 'pallet')
+                };
+                
+                // Display results
+                displayResults(allPositionCodes.length, allOccupiedPositions.length, byType, files.length);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Helper function to read file as text
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error(`Failed to read ${file.name}`));
+                reader.readAsText(file);
+            });
+        }
+        
+        // Display results
+        function displayResults(total, occupied, freeByType, fileCount) {
+            const resultsDiv = document.getElementById('results');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            const totalFree = freeByType.estante.length + freeByType.flowrack.length + freeByType.pallet.length;
+            
+            let html = `
+                <div class="results">
+                    <h3>✅ Results ${fileCount > 1 ? `(from ${fileCount} files)` : ''}</h3>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <h4>Total Positions</h4>
+                            <div class="number">${total}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Occupied</h4>
+                            <div class="number" style="color: #d32f2f;">${occupied}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Free</h4>
+                            <div class="number" style="color: #388e3c;">${totalFree}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Occupancy Rate</h4>
+                            <div class="number" style="color: #1976d2; font-size: 24px;">
+                                ${((occupied / total) * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+            `;
+            
+            // Helper function to group by region
+            function groupByRegion(positions) {
+                const grouped = {};
+                positions.forEach(p => {
+                    // Extract region prefix (A01, B01, W01, XC01, etc)
+                    const match = p.code.match(/^([A-Z]+\d+)-/);
+                    if (match) {
+                        const region = match[1];
+                        if (!grouped[region]) grouped[region] = [];
+                        grouped[region].push(p.code);
+                    }
+                });
+                return grouped;
+            }
+            
+            // Estante section
+            if (freeByType.estante.length > 0) {
+                const byRegion = groupByRegion(freeByType.estante);
+                html += `
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 6px; border-left: 4px solid #ff9800;">
+                        <h4 style="margin-bottom: 15px; color: #e65100; display: flex; align-items: center; gap: 8px;">
+                            📚 Estante - Ímpares (${freeByType.estante.length} free)
+                        </h4>
+                `;
+                
+                Object.keys(byRegion).sort().forEach(region => {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #e65100; margin-bottom: 8px; font-size: 14px;">
+                                Region ${region} (${byRegion[region].length})
+                            </h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+                    byRegion[region].forEach(code => {
+                        html += `<span class="position-item" style="background: #fff3e0;">${code}</span>`;
+                    });
+                    html += `</div></div>`;
+                });
+                
+                html += `</div>`;
+            }
+            
+            // Flowrack section
+            if (freeByType.flowrack.length > 0) {
+                const byRegion = groupByRegion(freeByType.flowrack);
+                html += `
+                    <div style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #2196f3;">
+                        <h4 style="margin-bottom: 15px; color: #0d47a1; display: flex; align-items: center; gap: 8px;">
+                            📦 Flowrack - Pares (${freeByType.flowrack.length} free)
+                        </h4>
+                `;
+                
+                Object.keys(byRegion).sort().forEach(region => {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #0d47a1; margin-bottom: 8px; font-size: 14px;">
+                                Region ${region} (${byRegion[region].length})
+                            </h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+                    byRegion[region].forEach(code => {
+                        html += `<span class="position-item" style="background: #e3f2fd;">${code}</span>`;
+                    });
+                    html += `</div></div>`;
+                });
+                
+                html += `</div>`;
+            }
+            
+            // Pallet section
+            if (freeByType.pallet.length > 0) {
+                const byRegion = groupByRegion(freeByType.pallet);
+                html += `
+                    <div style="margin-top: 15px; padding: 15px; background: #f3e5f5; border-radius: 6px; border-left: 4px solid #9c27b0;">
+                        <h4 style="margin-bottom: 15px; color: #4a148c; display: flex; align-items: center; gap: 8px;">
+                            🏗️ Picking Pallet (${freeByType.pallet.length} free)
+                        </h4>
+                `;
+                
+                Object.keys(byRegion).sort().forEach(region => {
+                    html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #4a148c; margin-bottom: 8px; font-size: 14px;">
+                                Region ${region} (${byRegion[region].length})
+                            </h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+                    byRegion[region].forEach(code => {
+                        html += `<span class="position-item" style="background: #f3e5f5;">${code}</span>`;
+                    });
+                    html += `</div></div>`;
+                });
+                
+                html += `</div>`;
+            }
+            
+            html += `</div>`;
+            
+            resultsDiv.innerHTML = html;
+            downloadBtn.style.display = 'inline-block';
+        }
+        
+        // Download results as CSV
+        function downloadResults() {
+            if (freePositions.length === 0) {
+                alert('No results to download');
+                return;
+            }
+            
+            let csv = 'position\n';
+            freePositions.forEach(pos => {
+                csv += pos + '\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `free_positions_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Reset function
+        function reset() {
+            document.getElementById('csvFile').value = '';
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('downloadBtn').style.display = 'none';
+            freePositions = [];
+        }
+    </script>
+</body>
+</html>
