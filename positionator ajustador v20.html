@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Distribution Center - Free Positions</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 28px;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .section {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .section h2 {
+        color: #667eea;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        border: 2px dashed #667eea;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      input[type="file"]:hover {
+        background: #f0f0ff;
+      }
+
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin-right: 10px;
+      }
+
+      button:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results {
+        margin-top: 30px;
+        padding: 20px;
+        background: #e8f5e9;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+      }
+
+      .results h3 {
+        color: #2e7d32;
+        margin-bottom: 15px;
+        font-size: 20px;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card h4 {
+        color: #666;
+        font-size: 12px;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+
+      .stat-card .number {
+        color: #333;
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      .positions-list {
+        max-height: 400px;
+        overflow-y: auto;
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .positions-list::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .positions-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .positions-list::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 4px;
+      }
+
+      .position-item {
+        display: inline-block;
+        padding: 4px 8px;
+        margin: 3px;
+        background: #f0f0ff;
+        border-radius: 4px;
+        color: #333;
+      }
+
+      .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .checkbox-label input {
+        cursor: pointer;
+      }
+
+      .error {
+        background: #ffebee;
+        color: #c62828;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        border-left: 4px solid #c62828;
+      }
+
+      .info {
+        background: #e3f2fd;
+        color: #1565c0;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📦 Distribution Center - Position Checker</h1>
+      <p class="subtitle">Upload CSV to find free positions</p>
+
+      <div class="section">
+        <h2>1. Select Storage Types</h2>
+
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 10px">
+          Storage Types:
+        </h3>
+        <div
+          class="checkbox-group"
+          style="grid-template-columns: repeat(4, 1fr)"
+        >
+          <label class="checkbox-label">
+            <input type="checkbox" id="typeEstante" value="estante" checked />
+            <span>📚 Estante (Ímpares)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="typeFlowrack" value="flowrack" checked />
+            <span>📦 Flowrack (Pares)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="typePallet" value="pallet" checked />
+            <span>🏗️ Picking Pallet</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="typeZPP" value="zpp" checked />
+            <span>🚪 Pallet Door (ZPP)</span>
+          </label>
+        </div>
+
+        <h3 style="font-size: 14px; color: #666; margin: 15px 0 10px 0">
+          Main Regions (Estante/Flowrack):
+        </h3>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionA" value="A" checked />
+            <span>Region A</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionB" value="B" checked />
+            <span>Region B</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionC" value="C" checked />
+            <span>Region C</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionD" value="D" checked />
+            <span>Region D</span>
+          </label>
+        </div>
+
+        <h3 style="font-size: 14px; color: #666; margin: 15px 0 10px 0">
+          Picking Pallet Regions:
+        </h3>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionW" value="W" checked />
+            <span>W01 (1-24)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionXC" value="XC" checked />
+            <span>XC01 (1-10)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionXD" value="XD" checked />
+            <span>XD01 (1-10)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionY1" value="Y1" checked />
+            <span>Y01 (1-26)</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionY2" value="Y2" checked />
+            <span>Y02 (1-50)</span>
+          </label>
+        </div>
+
+        <h3 style="font-size: 14px; color: #666; margin: 15px 0 10px 0">
+          Pallet Door (ZPP):
+        </h3>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="regionZPP" value="ZPP" checked />
+            <span>ZPP (Sections 01-15, Pos 1-40, Heights A-G)</span>
+          </label>
+        </div>
+
+        <div class="info">
+          <strong>Estante:</strong> Posições ímpares (A01-01, A01-03...) → A-F
+          <br /><strong>Flowrack:</strong> Posições pares (A01-02, A01-04...) →
+          A-E <br /><strong>Picking Pallet:</strong> Regiões W01, XC01, XD01,
+          Y01, Y02 + posições especiais → apenas A <br /><strong
+            >Pallet Door (ZPP):</strong
+          >
+          Matriz 3D → ZPP01-15, posições 1-40, alturas A-G (pos. 19: só D-G)
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. Upload Occupied Positions CSV</h2>
+        <label for="csvFile">Select CSV file(s) with occupied positions:</label>
+        <input type="file" id="csvFile" accept=".csv" multiple />
+        <div
+          id="fileList"
+          style="margin-top: 10px; font-size: 13px; color: #666"
+        ></div>
+      </div>
+
+      <div class="section">
+        <button id="processBtn" onclick="processPositions()">
+          🔍 Find Free Positions
+        </button>
+        <button
+          id="downloadBtn"
+          onclick="downloadResults()"
+          style="background: #4caf50; display: none"
+        >
+          💾 Download Free Positions
+        </button>
+        <button onclick="reset()" style="background: #ff9800">🔄 Reset</button>
+      </div>
+
+      <div id="results"></div>
+    </div>
+
+    <script>
+      let freePositions = [];
+
+      // Display selected files
+      document
+        .getElementById("csvFile")
+        .addEventListener("change", function (e) {
+          const fileList = document.getElementById("fileList");
+          const files = e.target.files;
+
+          if (files.length > 0) {
+            let html = `<strong>Selected files (${files.length}):</strong><br>`;
+            for (let i = 0; i < files.length; i++) {
+              html += `📄 ${files[i].name}<br>`;
+            }
+            fileList.innerHTML = html;
+          } else {
+            fileList.innerHTML = "";
+          }
+        });
+
+      const DEAD_ZONES = [
+        //A01 Bone zone
+        "A01-02",
+        "A01-04",
+        "A01-08",
+        "A01-06",
+        "A01-10",
+        "A01-12",
+        "A01-14",
+        "A01-16",
+        "A01-20",
+        "A01-22",
+        "A01-24",
+        "A01-26",
+        "A01-28",
+        "A01-204",
+        "A01-206",
+        "A01-208",
+        "A01-210",
+        "A01-222",
+        "A01-226",
+        "A01-230",
+        "A01-234",
+        "A01-238",
+        "A01-244",
+        "A01-248",
+        "A01-252",
+        "A01-256",
+        "A01-260",
+        "A01-264",
+        "A01-354",
+        "A01-356",
+        "A01-358",
+        "A01-444",
+        "A01-448",
+        "A01-452",
+        "A01-460",
+        "A01-464",
+        "A01-468",
+        "A01-472",
+        "A01-476",
+        "A01-480",
+        "A01-482",
+        "A01-484",
+        "A01-481",
+        "A01-483",
+        "A01-485",
+
+        //B01 Bone zone
+        "B01-06",
+        "B01-12",
+        "B01-18",
+        "B01-24",
+        "B01-10",
+        "B01-114",
+        "B01-116",
+        "B01-118",
+        "B01-114",
+        "B01-204",
+        "B01-206",
+        "B01-208",
+        "B01-210",
+        "B01-218",
+        "B01-222",
+        "B01-226",
+        "B01-230",
+        "B01-234",
+        "B01-238",
+        "B01-244",
+        "B01-248",
+        "B01-252",
+        "B01-260",
+        "B01-264",
+        "B01-354",
+        "B01-356",
+        "B01-358",
+        "B01-444",
+        "B01-448",
+        "B01-452",
+        "B01-460",
+        "B01-464",
+        "B01-468",
+        "B01-472",
+        "B01-476",
+        "B01-480",
+        "B01-484",
+        "B01-481",
+        "B01-483",
+        "B01-485",
+
+        //C01 Bone zone
+        "C01-06",
+        "C01-12",
+        "C01-18",
+        "C01-114",
+        "C01-116",
+        "C01-118",
+        "C01-232",
+        "C01-234",
+        "C01-236",
+        "C01-238",
+        "C01-354",
+        "C01-356",
+        "C01-358",
+        "C01-444",
+        "C01-446",
+        "C01-448",
+        "C01-452",
+        "C01-460",
+        "C01-464",
+        "C01-468",
+        "C01-472",
+        "C01-476",
+        "C01-480",
+        "C01-484",
+        "C01-481",
+        "C01-483",
+        "C01-485",
+
+        //D01 Bone zone
+        "D01-06",
+        "D01-12",
+        "D01-18",
+        "D01-24",
+        "D01-114",
+        "D01-116",
+        "D01-118",
+        "D01-204",
+        "D01-206",
+        "D01-208",
+        "D01-210",
+        "D01-214",
+        "D01-218",
+        "D01-222",
+        "D01-226",
+        "D01-230",
+        "D01-234",
+        "D01-238",
+        "D01-244",
+        "D01-248",
+        "D01-252",
+        "D01-256",
+        "D01-260",
+        "D01-354",
+        "D01-356",
+        "D01-358",
+        "D01-444",
+        "D01-446",
+        "D01-448",
+        "D01-452",
+        "D01-460",
+        "D01-464",
+        "D01-468",
+        "D01-472",
+        "D01-476",
+        "D01-480",
+        "D01-484",
+        "D01-481",
+        "D01-483",
+        "D01-485",
+
+        //Y01 Bone zone
+        "Y01-41",
+        "Y01-43",
+        "Y01-45",
+        "Y01-46",
+        "Y01-47",
+        "Y01-48",
+        "Y01-49",
+
+        //ZPP Bone zone
+        "ZPP03-05",
+        "ZPP06-06",
+        "ZPP10-05",
+        "ZPP10-07",
+        "ZPP13-05",
+      ];
+      // Define special pallet positions (exceptions from normal rules)
+      const SPECIAL_PALLET_POSITIONS = [
+        //A01 pick pallets
+        "A01-212-A",
+        "A01-214-A",
+        "A01-216-A",
+        "A01-218-A",
+        "A01-220-A",
+        "A01-224-A",
+        "A01-228-A",
+        "A01-232-A",
+        "A01-236-A",
+        "A01-240-A",
+        "A01-242-A",
+        "A01-246-A",
+        "A01-250-A",
+        "A01-254-A",
+        "A01-254-B",
+        "A01-258-A",
+        "A01-258-B",
+        "A01-262-A",
+        "A01-266-A",
+        "A01-268-A",
+        "A01-446-A",
+        "A01-450-A",
+        "A01-454-A",
+        "A01-456-A",
+        "A01-458-A",
+        "A01-462-A",
+        "A01-466-A",
+        "A01-470-A",
+        "A01-474-A",
+        "A01-478-A",
+
+        //B01 pick pallets
+        "B01-02-A",
+        "B01-04-A",
+        "B01-08-A",
+        "B01-10-A",
+        "B01-14-A",
+        "B01-16-A",
+        "B01-20-A",
+        "B01-212-A",
+        "B01-216-A",
+        "B01-22-A",
+        "B01-220-A",
+        "B01-224-A",
+        "B01-228-A",
+        "B01-232-A",
+        "B01-236-A",
+        "B01-236-B",
+        "B01-240-A",
+        "B01-240-B",
+        "B01-242-A",
+        "B01-246-A",
+        "B01-250-A",
+        "B01-254-A",
+        "B01-256-A",
+        "B01-256-B",
+        "B01-258-A",
+        "B01-26-A",
+        "B01-262-A",
+        "B01-266-A",
+        "B01-268-A",
+        "B01-28-A",
+        "B01-446-A",
+        "B01-450-A",
+        "B01-454-A",
+        "B01-456-A",
+        "B01-458-A",
+        "B01-462-A",
+        "B01-466-A",
+        "B01-470-A",
+        "B01-474-A",
+        "B01-478-A",
+        "B01-482-A",
+
+        //C01 Pick pallets
+        "C01-02-A",
+        "C01-04-A",
+        "C01-08-A",
+        "C01-10-A",
+        "C01-14-A",
+        "C01-16-A",
+        "C01-20-A",
+        "C01-204-A",
+        "C01-204-B",
+        "C01-206-A",
+        "C01-206-B",
+        "C01-208-A",
+        "C01-208-B",
+        "C01-210-A",
+        "C01-210-B",
+        "C01-212-A",
+        "C01-212-B",
+        "C01-214-A",
+        "C01-214-B",
+        "C01-216-A",
+        "C01-216-B",
+        "C01-218-A",
+        "C01-218-B",
+        "C01-22-A",
+        "C01-220-A",
+        "C01-220-B",
+        "C01-222-A",
+        "C01-222-B",
+        "C01-224-A",
+        "C01-224-B",
+        "C01-226-A",
+        "C01-226-B",
+        "C01-228-A",
+        "C01-228-B",
+        "C01-230-A",
+        "C01-230-B",
+        "C01-240-B",
+        "C01-242-A",
+        "C01-242-B",
+        "C01-244-A",
+        "C01-244-B",
+        "C01-246-A",
+        "C01-246-B",
+        "C01-248-A",
+        "C01-248-B",
+        "C01-250-A",
+        "C01-250-B",
+        "C01-252-A",
+        "C01-252-B",
+        "C01-254-A",
+        "C01-254-B",
+        "C01-256-A",
+        "C01-256-B",
+        "C01-258-A",
+        "C01-258-B",
+        "C01-26-A",
+        "C01-260-A",
+        "C01-262-A",
+        "C01-264-A",
+        "C01-266-A",
+        "C01-268-A",
+        "C01-28-A",
+        "C01-450-A",
+        "C01-454-A",
+        "C01-456-A",
+        "C01-458-A",
+        "C01-462-A",
+        "C01-466-A",
+        "C01-470-A",
+        "C01-474-A",
+        "C01-478-A",
+        "C01-482-A",
+
+        //D01 Pick pallets
+        "D01-02-A",
+        "D01-04-A",
+        "D01-08-A",
+        "D01-10-A",
+        "D01-14-A",
+        "D01-16-A",
+        "D01-20-A",
+        "D01-212-A",
+        "D01-216-A",
+        "D01-22-A",
+        "D01-220-A",
+        "D01-224-A",
+        "D01-228-A",
+        "D01-232-A",
+        "D01-236-A",
+        "D01-240-A",
+        "D01-240-B",
+        "D01-240-C",
+        "D01-240-D",
+        "D01-240-E",
+        "D01-240-F",
+        "D01-240-G",
+        "D01-240-H",
+        "D01-240-I",
+        "D01-240-J",
+        "D01-240-K",
+        "D01-240-L",
+        "D01-240-M",
+        "D01-240-N",
+        "D01-240-O",
+        "D01-240-P",
+        "D01-240-Q",
+        "D01-240-R",
+        "D01-240-S",
+        "D01-240-T",
+        "D01-240-U",
+        "D01-242-A",
+        "D01-242-B",
+        "D01-242-C",
+        "D01-242-D",
+        "D01-242-E",
+        "D01-242-F",
+        "D01-242-G",
+        "D01-246-A",
+        "D01-246-B",
+        "D01-250-A",
+        "D01-250-B",
+        "D01-254-A",
+        "D01-254-B",
+        "D01-258-A",
+        "D01-258-B",
+        "D01-26-A",
+        "D01-262-A",
+        "D01-262-B",
+        "D01-264-A",
+        "D01-264-B",
+        "D01-266-A",
+        "D01-266-B",
+        "D01-268-A",
+        "D01-268-B",
+        "D01-28-A",
+        "D01-450-A",
+        "D01-454-A",
+        "D01-456-A",
+        "D01-458-A",
+        "D01-462-A",
+        "D01-466-A",
+        "D01-470-A",
+        "D01-474-A",
+        "D01-478-A",
+        "D01-482-A",
+      ];
+
+      const PALLET_BASE_POSITIONS = new Set(
+        SPECIAL_PALLET_POSITIONS.map((code) =>
+          code.split("-").slice(0, 2).join("-"),
+        ),
+      );
+
+      const EXCLUDED_POSITIONS = [
+        "ZPP01-17-A",
+        "ZPP01-17-B",
+        "ZPP01-17-C",
+        "ZPP02-17-A",
+        "ZPP02-17-B",
+        "ZPP02-17-C",
+        "ZPP03-17-A",
+        "ZPP03-17-B",
+        "ZPP03-17-C",
+        "ZPP04-17-A",
+        "ZPP04-17-B",
+        "ZPP04-17-C",
+        "ZPP05-17-A",
+        "ZPP05-17-B",
+        "ZPP05-17-C",
+        "ZPP06-17-A",
+        "ZPP06-17-B",
+        "ZPP06-17-C",
+        "ZPP07-17-A",
+        "ZPP07-17-B",
+        "ZPP07-17-C",
+        "ZPP08-17-A",
+        "ZPP08-17-B",
+        "ZPP08-17-C",
+        "ZPP09-17-A",
+        "ZPP09-17-B",
+        "ZPP09-17-C",
+        "ZPP10-17-A",
+        "ZPP10-17-B",
+        "ZPP10-17-C",
+        "ZPP11-17-A",
+        "ZPP11-17-B",
+        "ZPP11-17-C",
+        "ZPP12-17-A",
+        "ZPP12-17-B",
+        "ZPP12-17-C",
+        "ZPP13-17-A",
+        "ZPP13-17-B",
+        "ZPP13-17-C",
+        "ZPP14-17-A",
+        "ZPP14-17-B",
+        "ZPP14-17-C",
+        "ZPP01-19-A",
+        "ZPP01-19-B",
+        "ZPP01-19-C",
+        "ZPP02-19-A",
+        "ZPP02-19-B",
+        "ZPP02-19-C",
+        "ZPP03-19-A",
+        "ZPP03-19-B",
+        "ZPP03-19-C",
+        "ZPP04-19-A",
+        "ZPP04-19-B",
+        "ZPP04-19-C",
+        "ZPP05-19-A",
+        "ZPP05-19-B",
+        "ZPP05-19-C",
+        "ZPP06-19-A",
+        "ZPP06-19-B",
+        "ZPP06-19-C",
+        "ZPP07-19-A",
+        "ZPP07-19-B",
+        "ZPP07-19-C",
+        "ZPP08-19-A",
+        "ZPP08-19-B",
+        "ZPP08-19-C",
+        "ZPP09-19-A",
+        "ZPP09-19-B",
+        "ZPP09-19-C",
+        "ZPP10-19-A",
+        "ZPP10-19-B",
+        "ZPP10-19-C",
+        "ZPP11-19-A",
+        "ZPP11-19-B",
+        "ZPP11-19-C",
+        "ZPP12-19-A",
+        "ZPP12-19-B",
+        "ZPP12-19-C",
+        "ZPP13-19-A",
+        "ZPP13-19-B",
+        "ZPP13-19-C",
+        "ZPP14-19-A",
+        "ZPP14-19-B",
+        "ZPP14-19-C",
+        "ZPP01-20-A",
+        "ZPP01-20-B",
+        "ZPP01-20-C",
+        "ZPP02-20-A",
+        "ZPP02-20-B",
+        "ZPP02-20-C",
+        "ZPP03-20-A",
+        "ZPP03-20-B",
+        "ZPP03-20-C",
+        "ZPP04-20-A",
+        "ZPP04-20-B",
+        "ZPP04-20-C",
+        "ZPP05-20-A",
+        "ZPP05-20-B",
+        "ZPP05-20-C",
+        "ZPP06-20-A",
+        "ZPP06-20-B",
+        "ZPP06-20-C",
+        "ZPP07-20-A",
+        "ZPP07-20-B",
+        "ZPP07-20-C",
+        "ZPP08-20-A",
+        "ZPP08-20-B",
+        "ZPP08-20-C",
+        "ZPP09-20-A",
+        "ZPP09-20-B",
+        "ZPP09-20-C",
+        "ZPP10-20-A",
+        "ZPP10-20-B",
+        "ZPP10-20-C",
+        "ZPP11-20-A",
+        "ZPP11-20-B",
+        "ZPP11-20-C",
+        "ZPP12-20-A",
+        "ZPP12-20-B",
+        "ZPP12-20-C",
+        "ZPP13-20-A",
+        "ZPP13-20-B",
+        "ZPP13-20-C",
+        "ZPP14-20-A",
+        "ZPP14-20-B",
+        "ZPP14-20-C",
+        "ZPP01-18-A",
+        "ZPP01-18-B",
+        "ZPP01-18-C",
+        "ZPP02-18-A",
+        "ZPP02-18-B",
+        "ZPP02-18-C",
+        "ZPP03-18-A",
+        "ZPP03-18-B",
+        "ZPP03-18-C",
+        "ZPP04-18-A",
+        "ZPP04-18-B",
+        "ZPP04-18-C",
+        "ZPP05-18-A",
+        "ZPP05-18-B",
+        "ZPP05-18-C",
+        "ZPP06-18-A",
+        "ZPP06-18-B",
+        "ZPP06-18-C",
+        "ZPP07-18-A",
+        "ZPP07-18-B",
+        "ZPP07-18-C",
+        "ZPP08-18-A",
+        "ZPP08-18-B",
+        "ZPP08-18-C",
+        "ZPP09-18-A",
+        "ZPP09-18-B",
+        "ZPP09-18-C",
+        "ZPP10-18-A",
+        "ZPP10-18-B",
+        "ZPP10-18-C",
+        "ZPP11-18-A",
+        "ZPP11-18-B",
+        "ZPP11-18-C",
+        "ZPP12-18-A",
+        "ZPP12-18-B",
+        "ZPP12-18-C",
+        "ZPP13-18-A",
+        "ZPP13-18-B",
+        "ZPP13-18-C",
+        "ZPP14-18-A",
+        "ZPP14-18-B",
+        "ZPP14-18-C",
+      ];
+
+      // Helper function to extract region category from a position code
+      function getRegionFromCode(code) {
+        if (code.startsWith("ZPP")) return "ZPP";
+        if (code.startsWith("XC")) return "XC";
+        if (code.startsWith("XD")) return "XD";
+        if (code.startsWith("Y01")) return "Y1";
+        if (code.startsWith("Y02")) return "Y2";
+        if (code.startsWith("W")) return "W";
+        if (code.startsWith("A")) return "A";
+        if (code.startsWith("B")) return "B";
+        if (code.startsWith("C")) return "C";
+        if (code.startsWith("D")) return "D";
+        return null;
+      }
+
+      function generateAllPositions() {
+        const positions = [];
+        const includeEstante = document.getElementById("typeEstante").checked;
+        const includeFlowrack = document.getElementById("typeFlowrack").checked;
+        const includePallet = document.getElementById("typePallet").checked;
+        const includeZPP = document.getElementById("typeZPP").checked;
+
+        // Get active regions
+        const mainRegions = ["A", "B", "C", "D"].filter(
+          (r) => document.getElementById(`region${r}`).checked,
+        );
+
+        // --- THE MASTER LOOP (Only one!) ---
+        for (const region of mainRegions) {
+          for (let num = 1; num <= 485; num++) {
+            // Loop up to 486 to catch all spots
+            const numStr = num.toString().padStart(2, "0");
+            const isOdd = num % 2 === 1;
+            const basePos = `${region}01-${numStr}`;
+
+            // 1. Skip if the whole base position doesn't exist
+            if (DEAD_ZONES.includes(basePos)) continue;
+
+            // 2. Skip if this is a specialized Pallet position (handled later)
+            if (PALLET_BASE_POSITIONS.has(basePos)) continue;
+
+            // 3. Filter by picking type (Estante vs Flowrack)
+            if (isOdd && !includeEstante) continue;
+            if (!isOdd && !includeFlowrack) continue;
+
+            // 4. Generate heights
+            const heights = isOdd
+              ? ["A", "B", "C", "D", "E", "F"]
+              : ["A", "B", "C", "D", "E"];
+            for (const height of heights) {
+              const code = `${basePos}-${height}`;
+              if (!EXCLUDED_POSITIONS.includes(code)) {
+                positions.push({
+                  code: code,
+                  type: isOdd ? "estante" : "flowrack",
+                });
+              }
+            }
+          }
+        }
+
+        // --- SPECIALIZED PALLETS ---
+        if (includePallet) {
+          SPECIAL_PALLET_POSITIONS.forEach((code) => {
+            // Only add if the region is checked
+            if (mainRegions.includes(code[0])) {
+              positions.push({ code: code, type: "pallet" });
+            }
+          });
+
+          // Handle extra regions (W, XC, XD, Y1, Y2)
+          const extraSpecs = [
+            { id: "W", prefix: "W01", max: 24, el: "regionW" },
+            { id: "XC", prefix: "XC01", max: 10, el: "regionXC" },
+            { id: "XD", prefix: "XD01", max: 10, el: "regionXD" },
+            { id: "Y1", prefix: "Y01", max: 26, el: "regionY1" },
+            { id: "Y2", prefix: "Y02", max: 40, el: "regionY2" },
+          ];
+
+          extraSpecs.forEach((s) => {
+            if (document.getElementById(s.el).checked) {
+              for (let n = 1; n <= s.max; n++) {
+                positions.push({
+                  code: `${s.prefix}-${n.toString().padStart(2, "0")}-A`,
+                  type: "pallet",
+                });
+              }
+            }
+          });
+        }
+
+        // --- ZPP REGION ---
+        if (includeZPP && document.getElementById("regionZPP").checked) {
+          for (let s = 1; s <= 15; s++) {
+            for (let p = 1; p <= 40; p++) {
+              let hs =
+                p === 19
+                  ? ["D", "E", "F", "G"]
+                  : ["A", "B", "C", "D", "E", "F", "G"];
+              hs.forEach((h) => {
+                const code = `ZPP${s.toString().padStart(2, "0")}-${p.toString().padStart(2, "0")}-${h}`;
+                if (!EXCLUDED_POSITIONS.includes(code)) {
+                  positions.push({ code: code, type: "zpp" });
+                }
+              });
+            }
+          }
+        }
+
+        return positions;
+      }
+      function parseCSV(csvText) {
+        const lines = csvText.split("\n");
+        const occupiedPositions = [];
+        // Detect semicolon, tab, or comma
+        const delimiter = lines[0].includes(";")
+          ? ";"
+          : lines[0].includes("\t")
+            ? "\t"
+            : ",";
+
+        // Clean headers (remove quotes and make lowercase to avoid case-sensitivity issues)
+        const headers = lines[0]
+          .split(delimiter)
+          .map((h) => h.trim().toLowerCase().replace(/['"]/g, ""));
+        let locationIndex = headers.indexOf("location_code");
+        if (locationIndex === -1) locationIndex = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          const columns = line.split(delimiter);
+          if (columns.length > locationIndex) {
+            // Strip out quotes just in case Excel added them
+            const position = columns[locationIndex].trim().replace(/['"]/g, "");
+            if (position && position.match(/^[A-Z]+\d+-\d+-[A-Z]$/)) {
+              occupiedPositions.push(position);
+            }
+          }
+        }
+        return occupiedPositions;
+      }
+
+      async function processPositions() {
+        const fileInput = document.getElementById("csvFile");
+        const resultsDiv = document.getElementById("results");
+
+        if (!fileInput.files.length) {
+          resultsDiv.innerHTML =
+            '<div class="error">❌ Please select at least one CSV file</div>';
+          return;
+        }
+
+        const files = fileInput.files;
+        let allOccupiedPositions = [];
+
+        try {
+          for (let i = 0; i < files.length; i++) {
+            const csvText = await readFileAsText(files[i]);
+            const occupiedPositions = parseCSV(csvText);
+            allOccupiedPositions =
+              allOccupiedPositions.concat(occupiedPositions);
+          }
+
+          allOccupiedPositions = [...new Set(allOccupiedPositions)];
+
+          const regionsInCSV = new Set();
+          allOccupiedPositions.forEach((code) => {
+            const region = getRegionFromCode(code);
+            if (region) regionsInCSV.add(region);
+          });
+
+          let allPositionsData = generateAllPositions();
+
+          if (regionsInCSV.size > 0) {
+            allPositionsData = allPositionsData.filter((p) => {
+              const region = getRegionFromCode(p.code);
+              return regionsInCSV.has(region);
+            });
+          }
+
+          const allPositionCodes = allPositionsData.map((p) => p.code);
+
+          // ✨ NOVO: Filtrar ocupadas para mostrar apenas as que estão no filtro ativo
+          const occupiedFiltered = allOccupiedPositions.filter((code) =>
+            allPositionCodes.includes(code),
+          );
+
+          const freePositionsData = allPositionsData.filter(
+            (p) => !allOccupiedPositions.includes(p.code),
+          );
+
+          freePositions = freePositionsData.map((p) => p.code);
+
+          const byType = {
+            estante: freePositionsData.filter((p) => p.type === "estante"),
+            flowrack: freePositionsData.filter((p) => p.type === "flowrack"),
+            pallet: freePositionsData.filter((p) => p.type === "pallet"),
+            zpp: freePositionsData.filter((p) => p.type === "zpp"),
+          };
+
+          displayResults(
+            allPositionCodes.length,
+            occupiedFiltered.length, // ✨ MUDOU: agora passa só as ocupadas filtradas
+            byType,
+            files.length,
+            regionsInCSV,
+          );
+        } catch (error) {
+          resultsDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+        }
+      }
+      function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) =>
+            reject(new Error(`Failed to read ${file.name}`));
+          reader.readAsText(file);
+        });
+      }
+
+      function displayResults(
+        total,
+        occupied,
+        freeByType,
+        fileCount,
+        regionsInCSV,
+        occupiedByType,
+      ) {
+        const resultsDiv = document.getElementById("results");
+        const downloadBtn = document.getElementById("downloadBtn");
+
+        const totalFree =
+          freeByType.estante.length +
+          freeByType.flowrack.length +
+          freeByType.pallet.length +
+          freeByType.zpp.length;
+
+        let detectedRegionsHtml = "";
+        if (regionsInCSV && regionsInCSV.size > 0) {
+          const regionsList = Array.from(regionsInCSV).sort().join(", ");
+          detectedRegionsHtml = `
+      <div class="info" style="margin-bottom: 20px; background: #e8f5e9; color: #2e7d32; border-left-color: #4caf50;">
+        <strong>🔍 Smart Filter Applied:</strong> Only showing positions for: <strong>${regionsList}</strong>
+      </div>
+    `;
+        }
+
+        // ✨ Calcular percentual de ocupação
+        const occupancyRate =
+          total > 0 ? ((occupied / total) * 100).toFixed(1) : 0;
+
+        let html = `
+    <div class="results">
+      <h3>✅ Results ${fileCount > 1 ? `(from ${fileCount} files)` : ""}</h3>
+      ${detectedRegionsHtml}
+      
+      <div class="stats">
+        <div class="stat-card">
+          <h4>Total Positions (Filtered)</h4>
+          <div class="number">${total}</div>
+        </div>
+        <div class="stat-card">
+          <h4>Occupied (Filtered)</h4>
+          <div class="number" style="color: #d32f2f;">${occupied}</div>
+        </div>
+        <div class="stat-card">
+          <h4>Free</h4>
+          <div class="number" style="color: #388e3c;">${totalFree}</div>
+        </div>
+        <div class="stat-card">
+          <h4>Occupancy Rate</h4>
+          <div class="number" style="color: #1976d2; font-size: 24px;">
+            ${occupancyRate}%
+          </div>
+        </div>
+      </div>
+  `;
+
+        // ✨ Mostrar detalhes por tipo (se fornecido)
+        if (occupiedByType) {
+          html += `
+      <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
+        <h4 style="color: #856404; margin-bottom: 10px;">📊 Occupancy Details:</h4>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
+          <div>📚 Estante: <strong>${occupiedByType.estante.length}</strong> occupied</div>
+          <div>📦 Flowrack: <strong>${occupiedByType.flowrack.length}</strong> occupied</div>
+          <div>🏗️ Pallet: <strong>${occupiedByType.pallet.length}</strong> occupied</div>
+          <div>🚪 ZPP: <strong>${occupiedByType.zpp.length}</strong> occupied</div>
+        </div>
+      </div>
+    `;
+        }
+        function groupByRegion(positions) {
+          const grouped = {};
+          positions.forEach((p) => {
+            const match = p.code.match(/^([A-Z]+\d+)-/);
+            if (match) {
+              const region = match[1];
+              if (!grouped[region]) grouped[region] = [];
+              grouped[region].push(p.code);
+            }
+          });
+          return grouped;
+        }
+
+        if (freeByType.estante.length > 0) {
+          const byRegion = groupByRegion(freeByType.estante);
+          html += `
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 6px; border-left: 4px solid #ff9800;">
+                        <h4 style="margin-bottom: 15px; color: #e65100; display: flex; align-items: center; gap: 8px;">
+                            📚 Estante - Ímpares (${freeByType.estante.length} free)
+                        </h4>
+                `;
+          Object.keys(byRegion)
+            .sort()
+            .forEach((region) => {
+              html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #e65100; margin-bottom: 8px; font-size: 14px;">Region ${region} (${byRegion[region].length})</h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+              byRegion[region].forEach((code) => {
+                html += `<span class="position-item" style="background: #fff3e0;">${code}</span>`;
+              });
+              html += `</div></div>`;
+            });
+          html += `</div>`;
+        }
+
+        if (freeByType.flowrack.length > 0) {
+          const byRegion = groupByRegion(freeByType.flowrack);
+          html += `
+                    <div style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #2196f3;">
+                        <h4 style="margin-bottom: 15px; color: #0d47a1; display: flex; align-items: center; gap: 8px;">
+                            📦 Flowrack - Pares (${freeByType.flowrack.length} free)
+                        </h4>
+                `;
+          Object.keys(byRegion)
+            .sort()
+            .forEach((region) => {
+              html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #0d47a1; margin-bottom: 8px; font-size: 14px;">Region ${region} (${byRegion[region].length})</h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+              byRegion[region].forEach((code) => {
+                html += `<span class="position-item" style="background: #e3f2fd;">${code}</span>`;
+              });
+              html += `</div></div>`;
+            });
+          html += `</div>`;
+        }
+
+        if (freeByType.pallet.length > 0) {
+          const byRegion = groupByRegion(freeByType.pallet);
+          html += `
+                    <div style="margin-top: 15px; padding: 15px; background: #f3e5f5; border-radius: 6px; border-left: 4px solid #9c27b0;">
+                        <h4 style="margin-bottom: 15px; color: #4a148c; display: flex; align-items: center; gap: 8px;">
+                            🏗️ Picking Pallet (${freeByType.pallet.length} free)
+                        </h4>
+                `;
+          Object.keys(byRegion)
+            .sort()
+            .forEach((region) => {
+              html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #4a148c; margin-bottom: 8px; font-size: 14px;">Region ${region} (${byRegion[region].length})</h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+              byRegion[region].forEach((code) => {
+                html += `<span class="position-item" style="background: #f3e5f5;">${code}</span>`;
+              });
+              html += `</div></div>`;
+            });
+          html += `</div>`;
+        }
+
+        if (freeByType.zpp.length > 0) {
+          const byRegion = groupByRegion(freeByType.zpp);
+          html += `
+                    <div style="margin-top: 15px; padding: 15px; background: #fff9e6; border-radius: 6px; border-left: 4px solid #ff9800;">
+                        <h4 style="margin-bottom: 15px; color: blue; display: flex; align-items: center; gap: 8px;">
+                            🚪 Pallet Door (ZPP) (${freeByType.zpp.length} free)
+                        </h4>
+                `;
+          Object.keys(byRegion)
+            .sort()
+            .forEach((region) => {
+              html += `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #e65100; margin-bottom: 8px; font-size: 14px;">Section ${region} (${byRegion[region].length})</h5>
+                            <div class="positions-list" style="max-height: 200px;">
+                    `;
+              byRegion[region].forEach((code) => {
+                html += `<span class="position-item" style="background: #fff9e6;">${code}</span>`;
+              });
+              html += `</div></div>`;
+            });
+          html += `</div>`;
+        }
+
+        html += `</div>`;
+        resultsDiv.innerHTML = html;
+        downloadBtn.style.display = "inline-block";
+      }
+
+      function downloadResults() {
+        if (freePositions.length === 0) {
+          alert("No results to download");
+          return;
+        }
+
+        // 1. Remover duplicatas
+        const uniqueList = [...new Set(freePositions)];
+
+        // 2. Agrupar por REGIÃO + TIPO (ex: "A-Estante", "A-Flowrack")
+        const grouped = {};
+
+        uniqueList.forEach((code) => {
+          const region = getRegionFromCode(code);
+
+          // Determinar o tipo baseado na posição
+          let type;
+          if (code.startsWith("ZPP")) {
+            type = "ZPP";
+          } else if (["W", "XC", "XD", "Y1", "Y2"].includes(region)) {
+            type = "Pallet";
+          } else if (SPECIAL_PALLET_POSITIONS.includes(code)) {
+            type = "Pallet";
+          } else {
+            // Verificar se é ímpar (Estante) ou par (Flowrack)
+            const match = code.match(/-(\d+)-/);
+            if (match) {
+              const num = parseInt(match[1]);
+              type = num % 2 === 1 ? "Estante" : "Flowrack";
+            } else {
+              type = "Unknown";
+            }
+          }
+
+          // Criar chave como "A-Estante", "B-Flowrack", etc.
+          const key = `${region}-${type}`;
+
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(code);
+        });
+
+        // 3. Ordenar cabeçalhos (A-Estante, A-Flowrack, B-Estante...)
+        const headers = Object.keys(grouped).sort();
+
+        // 4. Encontrar a coluna com mais posições
+        const maxRows = Math.max(...headers.map((h) => grouped[h].length));
+
+        // 5. Construir CSV
+        const sep = ";";
+        let csv = headers.join(sep) + "\n";
+
+        for (let i = 0; i < maxRows; i++) {
+          csv += headers.map((h) => grouped[h][i] || "").join(sep) + "\n";
+        }
+
+        // 6. Criar e baixar arquivo
+        const blob = new Blob(["\ufeff" + csv], {
+          type: "text/csv;charset=utf-8;",
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `Free_Positions_${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+
+        URL.revokeObjectURL(a.href); // Limpar memória
+      }
+      // Fixed Reset Function: Clears files, lists, and checkboxes
+      function reset() {
+        // Clear file input and the visual file list
+        document.getElementById("csvFile").value = "";
+        document.getElementById("fileList").innerHTML = "";
+
+        // Clear results display and data
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("downloadBtn").style.display = "none";
+        freePositions = [];
+
+        // Reset all checkboxes to checked (default state)
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((cb) => (cb.checked = true));
+
+        console.log("App Reset: Data and UI cleared.");
+      }
+    </script>
+  </body>
+</html>
